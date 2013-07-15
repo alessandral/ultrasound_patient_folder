@@ -24,7 +24,7 @@ module UltrasoundDriver
         patient.folder_date_of_services.each do |dos|
           full_path = patient.destination_path(@destination_path, dos)
           create_directory(full_path)
-          move_files(dos,full_path)
+          copy_files(dos,full_path)
         end
       end
     end
@@ -35,7 +35,7 @@ module UltrasoundDriver
       end
     end
 
-    def move_files(dos_path, full_path)
+    def copy_files(dos_path, full_path)
         Dir.glob(dos_path + '/*.*' ).each do |filename|
           FileUtils.cp(filename, full_path)
         end
