@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = UltrasoundDriver::VERSION
   spec.authors       = ["Alessandra Lopiano"]
   spec.email         = ["alopiano@promedicalinc.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Extract ultrasound files to be moved to a final Network destination}
+  spec.summary       = %q{Given a directory where to extract ultrasound files copy them to a final destination as date_of_service/Patient name/Files}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "rspec"
 end

@@ -1,5 +1,6 @@
 require_relative "ultrasound_driver/version"
 require_relative "ultrasound_driver/ultrasound_patient_folder"
+require_relative "ultrasound_driver/ultrasound_date_of_service_folder"
 require_relative "ultrasound_driver/process_directory"
 require "pry"
 
