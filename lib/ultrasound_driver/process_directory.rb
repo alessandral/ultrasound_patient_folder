@@ -26,8 +26,8 @@ module UltrasoundDriver
 
     def date_of_service_folders(patient)
       patient.date_of_service_folders.each do |date_of_service|
-        next if['.','..'].include? date_of_service
-        next unless File.directory? date_of_service
+        next if['.','..'].include? date_of_service.dos_path
+        next unless File.directory? date_of_service.dos_path
         date_of_service_files(patient, date_of_service)
       end
     end

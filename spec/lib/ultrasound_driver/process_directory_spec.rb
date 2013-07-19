@@ -93,6 +93,15 @@ describe UltrasoundDriver::ProcessDirectory do
      context "#date of service folders" do
        it "method exists" do
          expect(process_directory).to respond_to(:date_of_service_folders)
+       end
+
+       it "takes a patient object parameter" do
+
+         patient = double(:date_of_service_folders => [])
+
+         process_directory.date_of_service_folders(patient) do
+          expect(patient.date_of_service_folders).to eql([])
+         end
 
        end
 
