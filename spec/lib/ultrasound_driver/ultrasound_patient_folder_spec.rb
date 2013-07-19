@@ -3,11 +3,11 @@ require 'tmpdir'
 
 describe UltrasoundDriver::UltrasoundPatientFolder do
 
-    subject(:patient_folder) { described_class.new 'this_is_my_initial_path' }
-
     before(:each) do
-      initital_path = File.join(__FILE__, '/fixtures/test_folders/sonoexport/')
+      @initial_path  =  'spec/fixtures/test_folders/sonoexport/'
     end
+
+    subject(:patient_folder) { described_class.new(@initial_path) }
 
     context "#new " do
       it "returns a new instance of ultrasound patient folder " do
@@ -26,47 +26,42 @@ describe UltrasoundDriver::UltrasoundPatientFolder do
 
     end
 
-
     context "#patient name" do
       it "has method patient name" do
         expect(patient_folder).to respond_to(:patient_name)
       end
 
       it "should return patient name" do
-        input_path = 'Name, Lastname, M__[5443584rif]'
-        patient_folder = described_class.new(input_path)
-        temp_directory = Dir.mktmpdir(subject.path)
+        test_folder =  'april_showers_5678'
+        patient_folder = described_class.new(File.join(@initial_path, test_folder))
 
-        expect(patient_folder.patient_name).to eql(input_path)
+        expect(patient_folder.patient_name).to eql(test_folder)
 
-        FileUtils.remove_entry_secure temp_directory
       end
     end
 
     context "date_of_service_folders" do
 
       it "should call a method to return an array " do
-        dos_mock = double
+        test_folder = File.join(@initial_path, 'april_showers_5678')
+        dos_mock = double(new: test_folder)
 
         patient_folder.date_of_service_folders(dos_mock)
 
-        expect(dos_mock).to have_received(:new).with('some_folder_path')
-        expect(dos_mock).to have_received(:new).with('some_other_folder_path')
+        expect(dos_mock).to have_received(:new).with(test_folder)
       end
 
       it "returns an array with dates of service object" do
-        Dir.mktmpdir do |path|
-          dos_paths = [File.join(path,'2013Jul09 blah'), File.join(path,'2013Jul10 blah')]
+        test_folder = File.join(@initial_path, 'august_hot_1234')
+        dos_mock = double(new: test_folder)
 
-          FileUtils.mkdir(dos_paths)
-          patient_folder = described_class.new(path)
-          dos_mock = double
+        dos_paths = [File.join(test_folder, '2013Aug13zblah'), File.join(test_folder, '2013Aug16yblah')]
 
-          patient_folder.date_of_service_folders(dos_mock)
+        patient_folder = described_class.new(test_folder)
+        patient_folder.date_of_service_folders(dos_mock)
 
-          dos_paths.each do |dos_path|
-            expect(dos_mock).to have_received(:new).with(dos_path)
-          end
+        dos_paths.each do |dos_path|
+          expect(dos_mock).to have_received(:new).with(dos_path)
         end
       end
 

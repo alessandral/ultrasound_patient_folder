@@ -13,6 +13,7 @@ module UltrasoundDriver
     end
 
     def date_of_service_folders(date_of_service_folder_class = UltrasoundDriver::UltrasoundDateOfServiceFolder)
+      @services = []
       Dir.entries(path).each do |dos|
         next if ['.','..'].include? dos
         next unless File.directory? File.join(path, dos)
