@@ -8,6 +8,10 @@ module UltrasoundDriver
        self.destination_path = destination_path
     end
 
+    def work_directory
+      patient_date_of_service_folders
+    end
+
     def patient_folders(patient_folder_class = UltrasoundPatientFolder)
       patients = []
       Dir.entries(source_path).each do |folder|

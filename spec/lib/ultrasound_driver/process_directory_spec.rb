@@ -37,7 +37,17 @@ describe UltrasoundDriver::ProcessDirectory do
     end
   end
 
-  context "work directory" do
+  context "directory" do
+
+    it "calls work directory" do
+      expect(process_directory).to respond_to(:work_directory)
+    end
+
+    it "calls patient date of folders" do
+      process_directory.work_directory do |action|
+         expect(action).to respond_to(:patient_date_of_service_folders)
+      end
+    end
 
     it "calls method to read folders" do
       expect(process_directory).to respond_to(:patient_folders)
