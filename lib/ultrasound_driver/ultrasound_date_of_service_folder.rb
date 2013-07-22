@@ -1,3 +1,5 @@
+require 'date'
+
 module UltrasoundDriver
   class UltrasoundDateOfServiceFolder
 
