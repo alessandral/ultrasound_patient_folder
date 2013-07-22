@@ -44,15 +44,17 @@ describe UltrasoundDriver::ProcessDirectory do
     end
 
     it "returns and array with patients object" do
-      patient_double = double(new: source_path)
 
-      process_directory.patient_folders(patient_double)
+      patient_double = double("patient_folder")
+      allow(patient_double).to receive(:new).with(File.join(source_path, 'april_showers_5678')) {Array}
 
-      expect(patient_double).to have_received(:new).with(File.join(source_path, 'april_showers_5678/'))
-      expect(patient_double).to have_received(:new).with(File.join(source_path, 'august_hot_1234/'))
+      process_directory.patient_folders
+
+      expect(patient_double.new(File.join(source_path, 'april_showers_5678'))).to eql(Array)
+
     end
 
-    it "returns and array with patients object" do
+    it "returns patient object for each folder found in directory" do
       allow(UltrasoundDriver::UltrasoundPatientFolder).to receive(:new)
 
       process_directory.patient_folders
@@ -111,6 +113,51 @@ describe UltrasoundDriver::ProcessDirectory do
        it "method exists" do
          expect(process_directory).to respond_to(:date_of_service_files)
        end
+
+       it "takes two parameters" do
+        expect(process_directory).to respond_to(:date_of_service_files).with(2).arguments
+       end
+
+       it "calls a sequence of methods to copy the final files" do
+         patient         = double(:patient_name    => 'april_showers_5678')
+         date_of_service = double(:date_of_service => '20130410', :folder_files => ["#{source_path}" + 'april_showers_5678' + '/2013Apr10xblah/april_file.txt'] )
+
+          process_directory.date_of_service_files(patient,date_of_service) do |files|
+            expect(files).to respond_to(:full_path)
+            expect(files).to respond_to(:create_directory)
+            expect(files).to respond_to(:move_files_final_destination)
+          end
+
+       end
+
+     end
+
+     context "#destination full path" do
+        it "returns a full path as destination path + date of service + patient name" do
+          dos_double     = double(:date_of_service => '20130202')
+          patient_double = double(:patient_name    => 'april_showers_are_great')
+
+          final_path = File.join(process_directory.destination_path, dos_double.date_of_service, patient_double.patient_name)
+
+          expect(dos_double.date_of_service).to eql ('20130202')
+          expect(patient_double.patient_name).to eql ('april_showers_are_great')
+          expect(process_directory.destination_full_path(dos_double, patient_double)).to eql(final_path)
+
+        end
+     end
+
+     context "#create directory" do
+        it "creates directory if doesn't exist" do
+          whole_path = destination_path + 'april/showers_5678/20130410'
+          expect(process_directory.create_directory(whole_path)).to eql([whole_path])
+        end
+
+        it "doesn't create the directory if exists" do
+          whole_path = destination_path + 'april_Showers_5678/20130410'
+          process_directory.create_directory(whole_path)
+
+          expect(process_directory.create_directory(whole_path)).to eql(nil)
+        end
      end
 
   end

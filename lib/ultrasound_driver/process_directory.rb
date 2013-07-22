@@ -12,7 +12,7 @@ module UltrasoundDriver
       patients = []
       Dir.entries(source_path).each do |folder|
        next if ['.','..'].include? folder
-       next unless File.directory? folder
+       next unless File.directory? File.join(source_path,folder)
        patients << patient_folder_class.new(File.join(source_path, folder))
       end
       patients
@@ -25,20 +25,34 @@ module UltrasoundDriver
     end
 
     def date_of_service_folders(patient)
-      patient.date_of_service_folders.each do |date_of_service|
-        next if['.','..'].include? date_of_service.dos_path
-        next unless File.directory? date_of_service.dos_path
-        date_of_service_files(patient, date_of_service)
+      patient.date_of_service_folders.each do |date_of_service_folder|
+        next if['.','..'].include? date_of_service_folder.dos_path
+        next unless File.directory? date_of_service_folder.dos_path
+        date_of_service_files(patient, date_of_service_folder)
       end
     end
 
-    def date_of_service_files(patient, date_of_service)
-      #the final steps: see if the directory exists if not create the directory as dos/patient/
-      #                 using the methods of the classes are passing in
-      #                 move the files
-
+    def date_of_service_files(patient, date_of_service_folder)
+      full_path = destination_full_path(date_of_service_folder, patient)
+      create_directory(full_path)
+      move_files_final_destination(date_of_service_folder, full_path)
     end
 
+    def destination_full_path(date_of_service_folder, patient)
+      return File.join(destination_path, date_of_service_folder.date_of_service, patient.patient_name)
+    end
+
+    def create_directory(full_path)
+      if !File.directory? full_path
+        FileUtils.mkdir_p full_path
+      end
+    end
+
+    def move_files_final_destination(date_of_service_folder, full_path)
+      date_of_service_folder.folder_files.each do |filename|
+        FileUtils.cp(filename, full_path)
+      end
+    end
 
   end
 end
